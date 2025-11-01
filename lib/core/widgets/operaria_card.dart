@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../features/auth/domain/entities/user.dart';
+import 'package:domy/core/widgets/service_request_form.dart';
 
 class OperariaCard extends StatelessWidget {
   final User user;
@@ -7,7 +8,7 @@ class OperariaCard extends StatelessWidget {
   final int completedServices;
   final List<String> specialties;
   final String description;
-  final VoidCallback onSolicitar;
+  final void Function(BuildContext)? onSolicitar;
 
   const OperariaCard({
     Key? key,
@@ -163,7 +164,7 @@ class OperariaCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: onSolicitar,
+                onPressed: onSolicitar != null ? () => onSolicitar!(context) : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF10B981),
                   padding: const EdgeInsets.symmetric(vertical: 12),

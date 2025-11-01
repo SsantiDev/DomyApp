@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/services/mock_operarias_service.dart';
 import '/core/widgets/operaria_card.dart';
 import '/core/widgets/empty_state.dart';
+import 'package:domy/core/widgets/service_request_form.dart';
+
 
 class OperariasListPage extends StatefulWidget {
   const OperariasListPage({super.key});
@@ -31,7 +33,14 @@ class _OperariasListPageState extends State<OperariasListPage> {
 
   void _loadOperarias() {
     Future.delayed(const Duration(milliseconds: 500), () {
+      MockOperariasService.instance.initialize(); // Asegurar inicialización
       final all = MockOperariasService.instance.getAllOperarias();
+      
+      print('=== OPERARIAS CARGADAS ===');
+      for (var op in all) {
+        print('Operaria: ${op.user.name} - ID: ${op.user.id}');
+      }
+      
       setState(() {
         _operarias = all;
         _filteredOperarias = all;
@@ -60,7 +69,17 @@ class _OperariasListPageState extends State<OperariasListPage> {
   }
 
   void _solicitarServicio(OperariaInfo operaria) {
-    _showSuccessSnackBar('Solicitud enviada a ${operaria.user.name}');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ServiceRequestForm(operaria: operaria.user),
+      ),
+    ).then((request) {
+      if (request != null) {
+        // La solicitud se creó exitosamente
+        // El snackbar se muestra en el formulario
+      }
+    });
   }
 
   void _showSuccessSnackBar(String message) {
@@ -120,7 +139,7 @@ class _OperariasListPageState extends State<OperariasListPage> {
                               completedServices: op.completedServices,
                               specialties: op.specialties,
                               description: op.description,
-                              onSolicitar: () =>
+                              onSolicitar: (_) =>
                                   _solicitarServicio(op),
                             );
                           },

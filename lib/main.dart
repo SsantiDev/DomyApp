@@ -1,3 +1,4 @@
+import 'package:domy/features/auth/presentation/pages/operaria_request_page.dart';
 import 'package:domy/features/auth/presentation/pages/operarias_list_page.dart';
 import 'package:flutter/material.dart';
 import 'features/auth/presentation/pages/login_page.dart';
@@ -26,6 +27,7 @@ class AseoApp extends StatelessWidget {
         '/register': (context) => const RegisterPage(),
         '/profile': (context) => const ProfilePage(),
         '/operarias': (context) => const OperariasListPage(),
+        '/solicitudes': (context) => const OperariaRequestsPage(),
         '/home': (context) => HomePage(
               userRole: ModalRoute.of(context)?.settings.arguments as String,
             ),
