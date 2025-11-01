@@ -8,6 +8,10 @@ class MockAuthService {
   final List<Map<String, String>> _credentials = []; // {email, password}
   final List<User> _users = [];
 
+
+  User? _currentUser; // usuario logueado actualmente (in-memory)
+  User? get currentUser => _currentUser;
+
   /// Registra un usuario. Lanza Exception si email ya existe.
   Future<User> register({
     required String name,
@@ -50,10 +54,43 @@ class MockAuthService {
     );
     if (cred.isEmpty) throw Exception('Credenciales inválidas');
 
+
     final user = _users.firstWhere((u) => u.email == email);
+    _currentUser = user; //marcar sesion activa
     return user;
   }
 
+  //Actualiza los datos del usuario (in-memory)
+  //retorna el usuario actualizado
+  Future<User> updateUser({
+    required String id,
+    String? name,
+    String? phone,
+    String? address,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    final idx = _users.indexWhere((u) => u.id == id);
+    if (idx == -1) throw Exception('Usuario no encontrado');
+
+    final old = _users[idx];
+    final updated = User(
+      id: old.id,
+      name: name ?? old.name,
+      email: old.email,
+      role: old.role,
+      phone: phone ?? old.phone,
+      address: address ?? old.address,
+    );
+
+    _users[idx] = updated;
+
+    //si es el currentUser, actualizar referencia
+    if (_currentUser != null && _currentUser!.id == id) {
+      _currentUser = updated;
+    }
+    return updated;
+  }
+  
   List<User> allUsers() => List.unmodifiable(_users);
 
   String _randomId() => DateTime.now().millisecondsSinceEpoch.toRadixString(16) +

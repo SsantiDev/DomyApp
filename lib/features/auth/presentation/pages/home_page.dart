@@ -52,14 +52,70 @@ class HomePage extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(right: 8),
-          child: IconButton(
-            icon: const Icon(Icons.person_outlined),
-            onPressed: () {
-              Navigator.pushNamed(context, '/profile');
-            },
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.person_outlined),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/profile');
+                },
+              ),
+              PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'logout') {
+                    _showLogoutDialog(context);
+                  }
+                },
+                itemBuilder: (BuildContext context) => [
+                  const PopupMenuItem<String>(
+                    value: 'logout',
+                    child: Row(
+                      children: [
+                        Icon(Icons.logout, size: 20),
+                        SizedBox(width: 8),
+                        Text('Cerrar sesión'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ],
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Cerrar sesión'),
+          content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Navegar a login reemplazando todas las rutas anteriores
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/',
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                'Cerrar sesión',
+                style: TextStyle(color: Color(0xFFEF4444)),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -68,7 +124,7 @@ class HomePage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          _isCliente ? '¡Hola, Cliente!' : '¡Hola, Operaria!',
+          _isCliente ? '¡Hola, Cliente!' : '¡Hola, Operario!',
           style: const TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -102,7 +158,7 @@ class HomePage extends StatelessWidget {
         const SizedBox(height: 16),
         QuickActionCard(
           icon: Icons.person_search,
-          title: 'Ver operarias disponibles',
+          title: 'Ver operarios disponibles',
           description: 'Explora y contrata operarias para tu hogar',
           onTap: () {
             Navigator.pushNamed(context, '/operarias');

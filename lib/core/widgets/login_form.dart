@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/services/mock_auth_service.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
@@ -37,28 +38,34 @@ class _LoginFormState extends State<LoginForm> {
 
     setState(() => _isLoading = true);
 
-    // Simulación de delay de red
-    await Future.delayed(const Duration(milliseconds: 1500));
-
-    if (!mounted) return;
-
-    // Simulación de login
-    if (email == 'cliente@domy.com' && password == 'cliente123') {
-      _showSuccessSnackBar('¡Inicio de sesión exitoso!');
-      // simulamos el rol del usuario
-      const userRole = 'cliente';
-
-      // Esperamos un poco para que se vea el snackbar antes de navegar
-      await Future.delayed(const Duration(milliseconds: 800));
+    try {
+      // Llamar al servicio de autenticación
+      final user = await MockAuthService.instance.login(
+        email: email,
+        password: password,
+      );
 
       if (!mounted) return;
 
-      Navigator.pushReplacementNamed(context, '/home', arguments: userRole);
-    } else {
-      _showErrorSnackBar('Email o contraseña incorrectos');
-    }
+      _showSuccessSnackBar('¡Inicio de sesión exitoso!');
 
-    setState(() => _isLoading = false);
+      // Esperar a que se muestre el mensaje
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (!mounted) return;
+
+      // Navegar a home con el rol del usuario
+      Navigator.pushReplacementNamed(
+        context,
+        '/home',
+        arguments: user.role,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      _showErrorSnackBar(e.toString());
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   bool _isEmailValid(String email) {

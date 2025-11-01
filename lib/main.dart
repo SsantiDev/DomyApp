@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/home_page.dart';
 import 'features/auth/presentation/pages/register_page.dart';
+import 'features/auth/presentation/pages/profile_page.dart';
 
 
 void main() {
@@ -22,6 +23,7 @@ class AseoApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
+        '/profile': (context) => const ProfilePage(),
         '/home': (context) => HomePage(
               userRole: ModalRoute.of(context)?.settings.arguments as String,
             ),
